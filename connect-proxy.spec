@@ -4,7 +4,7 @@
 #
 Name     : connect-proxy
 Version  : 1
-Release  : 12
+Release  : 13
 URL      : http://localhost/cgit/projects/connect-proxy/snapshot/connect-proxy-1.tar.gz
 Source0  : http://localhost/cgit/projects/connect-proxy/snapshot/connect-proxy-1.tar.gz
 Summary  : No detailed summary available
