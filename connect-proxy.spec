@@ -4,14 +4,15 @@
 #
 Name     : connect-proxy
 Version  : 1
-Release  : 16
+Release  : 17
 URL      : http://localhost/cgit/projects/connect-proxy/snapshot/connect-proxy-1.tar.gz
 Source0  : http://localhost/cgit/projects/connect-proxy/snapshot/connect-proxy-1.tar.gz
 Summary  : No detailed summary available
 Group    : Development/Tools
 License  : GPL-2.0
-Requires: connect-proxy-bin
-Requires: connect-proxy-doc
+Requires: connect-proxy-bin = %{version}-%{release}
+Requires: connect-proxy-license = %{version}-%{release}
+Requires: connect-proxy-man = %{version}-%{release}
 
 %description
 No detailed description available
@@ -19,41 +20,61 @@ No detailed description available
 %package bin
 Summary: bin components for the connect-proxy package.
 Group: Binaries
+Requires: connect-proxy-license = %{version}-%{release}
 
 %description bin
 bin components for the connect-proxy package.
 
 
-%package doc
-Summary: doc components for the connect-proxy package.
-Group: Documentation
+%package license
+Summary: license components for the connect-proxy package.
+Group: Default
 
-%description doc
-doc components for the connect-proxy package.
+%description license
+license components for the connect-proxy package.
+
+
+%package man
+Summary: man components for the connect-proxy package.
+Group: Default
+
+%description man
+man components for the connect-proxy package.
 
 
 %prep
 %setup -q -n connect-proxy-1
+cd %{_builddir}/connect-proxy-1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1510692615
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1604538710
+export GCC_IGNORE_WERROR=1
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 %reconfigure --disable-static
-make V=1  %{?_smp_mflags}
+make  %{?_smp_mflags}
 
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-make VERBOSE=1 V=1 %{?_smp_mflags} check
+make %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1510692615
+export SOURCE_DATE_EPOCH=1604538710
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/package-licenses/connect-proxy
+cp %{_builddir}/connect-proxy-1/COPYING %{buildroot}/usr/share/package-licenses/connect-proxy/4cc77b90af91e615a64ae04893fdffa7939db84c
 %make_install
 
 %files
@@ -63,6 +84,10 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 /usr/bin/connect-proxy
 
-%files doc
-%defattr(-,root,root,-)
-%doc /usr/share/man/man1/*
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/connect-proxy/4cc77b90af91e615a64ae04893fdffa7939db84c
+
+%files man
+%defattr(0644,root,root,0755)
+/usr/share/man/man1/connect-proxy.1
